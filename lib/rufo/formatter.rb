@@ -2655,7 +2655,11 @@ class Rufo::Formatter
     if void_exps?(body)
       consume_space
       consume_token :on_tlambeg
-      consume_space
+      if space_inside_lambda
+        consume_space
+      else
+        skip_space_or_newline
+      end
       consume_token :on_rbrace
       return
     end
@@ -2671,9 +2675,17 @@ class Rufo::Formatter
       if current_token_line == closing_brace_token[0][0]
         consume_token :on_tlambeg
 
-        consume_space
+        if space_inside_lambda
+          consume_space
+        else
+          skip_space_or_newline
+        end
         visit_exps body, with_lines: false
-        consume_space
+        if space_inside_lambda
+          consume_space
+        else
+          skip_space_or_newline
+        end
 
         consume_token :on_rbrace
         return
