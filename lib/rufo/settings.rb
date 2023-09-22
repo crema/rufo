@@ -3,7 +3,7 @@ module Rufo::Settings
     parens_in_def: [:yes, :dynamic],
     align_case_when: [false, true],
     align_chained_calls: [false, true],
-    trailing_commas: [true, false],
+    trailing_commas: [false, true],
     quote_style: [:single, :double],
     space_inside_hash: [false, true],
     space_inside_lambda: [false, true],
