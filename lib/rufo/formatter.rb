@@ -2392,12 +2392,15 @@ class Rufo::Formatter
       push_hash(node) do
         visit_literal_elements(elements[1], inside_hash: true, token_column: token_column)
       end
-      char_after_brace = @output[brace_position + 1]
-      # Check that need_space is set correctly.
-      if !need_space && !["\n", " "].include?(char_after_brace)
-        need_space = true
-        # Add a space in the missing position.
-        @output.insert(brace_position + 1, " ")
+
+      if space_inside_hash
+        char_after_brace = @output[brace_position + 1]
+        # Check that need_space is set correctly.
+        if !need_space && !["\n", " "].include?(char_after_brace)
+          need_space = true
+          # Add a space in the missing position.
+          @output.insert(brace_position + 1, " ")
+        end
       end
     else
       skip_space_or_newline
@@ -4198,12 +4201,16 @@ class Rufo::Formatter
 
   # Check to see if need to add space inside hash literal braces.
   def need_space_for_hash?(node, elements, closing_brace_token)
-    return false if elements.nil? || elements.empty?
+    if space_inside_hash
+      return false if elements.nil? || elements.empty?
 
-    left_need_space = current_token_line == node_line(node, beginning: true)
-    right_need_space = closing_brace_token[0][0] == node_line(node, beginning: false)
+      left_need_space = current_token_line == node_line(node, beginning: true)
+      right_need_space = closing_brace_token[0][0] == node_line(node, beginning: false)
 
-    left_need_space && right_need_space
+      left_need_space && right_need_space
+    else
+      false
+    end
   end
 
   def node_line(node, beginning: true)

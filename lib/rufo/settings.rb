@@ -5,6 +5,7 @@ module Rufo::Settings
     align_chained_calls: [false, true],
     trailing_commas: [true, false],
     quote_style: [:double, :single],
+    space_inside_hash: [false, true],
     includes: nil,
     excludes: nil,
   }
