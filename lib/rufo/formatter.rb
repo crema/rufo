@@ -2182,9 +2182,17 @@ class Rufo::Formatter
       write_params_comma if needs_comma
       visit_comma_separated_list(args_with_default) do |arg, default|
         visit arg
-        consume_space
+        if space_around_default_parameter
+          consume_space
+        else
+          skip_space_or_newline
+        end
         consume_op "="
-        consume_space
+        if space_around_default_parameter
+          consume_space
+        else
+          skip_space_or_newline
+        end
         visit default
       end
       needs_comma = true
