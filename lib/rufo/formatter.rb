@@ -2949,32 +2949,35 @@ class Rufo::Formatter
     #
     # [:if, cond, then, else]
     line = @line
+    column = @column
 
     consume_keyword(keyword)
     consume_space
     visit node[1]
     skip_space
 
-    indent_body node[2]
-    if (else_body = node[3])
-      # [:else, else_contents]
-      # [:elsif, cond, then, else]
-      write_indent if @line != line
+    indent(align_if ? column : @indent) do
+      indent_body node[2]
+      if (else_body = node[3])
+        # [:else, else_contents]
+        # [:elsif, cond, then, else]
+        write_indent if @line != line
 
-      case else_body[0]
-      when :else
-        consume_keyword "else"
-        indent_body else_body[1]
-      when :elsif
-        visit_if_or_unless else_body, "elsif", check_end: false
-      else
-        bug "expected else or elsif, not #{else_body[0]}"
+        case else_body[0]
+        when :else
+          consume_keyword "else"
+          indent_body else_body[1]
+        when :elsif
+          visit_if_or_unless else_body, "elsif", check_end: false
+        else
+          bug "expected else or elsif, not #{else_body[0]}"
+        end
       end
-    end
 
-    if check_end
-      write_indent if @line != line
-      consume_keyword "end"
+      if check_end
+        write_indent if @line != line
+        consume_keyword "end"
+      end
     end
   end
 
