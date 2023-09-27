@@ -1376,14 +1376,22 @@ class Rufo::Formatter
     if current_token_line == closing_brace_token[0][0]
       consume_token :on_lbrace
       consume_block_args args
-      consume_space
+      if space_inside_block || !args.nil?
+        consume_space
+      else
+        skip_space_or_newline
+      end
       visit_exps body, with_lines: false
 
       while semicolon?
         next_token
       end
 
-      consume_space
+      if space_inside_block
+        consume_space
+      else
+        skip_space_or_newline
+      end
 
       consume_token :on_rbrace
       return
@@ -1417,7 +1425,7 @@ class Rufo::Formatter
 
     consume_keyword "do"
 
-    consume_block_args args
+    consume_block_args args, block_type: :do
 
     if body.first == :bodystmt
       visit_bodystmt body
@@ -1428,9 +1436,13 @@ class Rufo::Formatter
     end
   end
 
-  def consume_block_args(args)
+  def consume_block_args(args, block_type: :braces)
     if args
-      consume_space_or_newline
+      if space_inside_block || block_type == :do
+        consume_space_or_newline
+      else
+        skip_space_or_newline
+      end
       # + 1 because of |...|
       #                ^
       indent(@column + 1) do

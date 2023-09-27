@@ -7,6 +7,7 @@ module Rufo::Settings
     quote_style: [:single, :double],
     space_inside_hash: [false, true],
     space_inside_lambda: [false, true],
+    space_inside_block: [false, true],
     includes: nil,
     excludes: nil,
   }
